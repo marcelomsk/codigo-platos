@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>Upload imagem</title>
+    <meta charset="utf-8">
+    <link href="upload.css" rel="stylesheet">
+  </head>
+  <body>
+    <form method="post" enctype="multipart/form-data">
+        <div>
+            <label for="image_uploads">Escolha as imagens para carregar (PNG, JPG)</label>
+            <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple />
+        </div>
+        <div class="preview">
+            <p>Nenhum arquivo selecionado para upload</p>
+        </div>
+        <div>
+            <button>Enviar</button>
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        const input = document.querySelector('input');
+        const divPreview = document.querySelector('.preview');
+        const tiposArquivosPermitidos = [
+            "image/apng",
+            "image/bmp",
+            "image/gif",
+            "image/jpeg",
+            "image/pjpeg",
+            "image/png",
+            "image/svg+xml",
+            "image/tiff",
+            "image/webp",
+            "image/x-icon"
+        ];
+
+        input.style.opacity = 0;
+
+        input.addEventListener('change', updateImageDisplay);
+
+        function updateImageDisplay(){
+
+            while(divPreview.firstChild){
+                divPreview.removeChild(divPreview.firstChild);
+            }
+
+            const listaArquivos = input.files;
+            if(listaArquivos.length === 0){
+
+                const paragrafo = document.createElement('p');
+                paragrafo.textContent = "Nenhum arquivo selecionado para upload";
+                divPreview.appendChild(paragrafo);
+
+            }
+            else{
+                const listaDeImagens = document.createElement('ol');
+                divPreview.appendChild(listaDeImagens);
+
+                for (const arquivo of listaArquivos){
+
+                    const itemLista = document.createElement('li');
+                    const div = document.createElement('div');
+                    const paragrafo = document.createElement('p');
+
+                    div.setAttribute("class", "imagem");
+
+                    if(validarTipoArquivo(arquivo)){
+                        paragrafo.textContent = `Nome do arquivo ${arquivo.name}, tamanho do arquivo ${returnTamanhoArquivo(arquivo.size)}.`;
+                        const imagem = document.createElement('img');
+                        imagem.src = URL.createObjectURL(arquivo);
+
+                        div.appendChild(imagem);
+
+                        itemLista.appendChild(div);
+                        itemLista.appendChild(paragrafo);
+                    }
+                    else{
+                        paragrafo.textContent = `Nome do arquivo ${arquivo.name}: Não é um tipo de arquivo válido. Atualize sua seleção.`;
+                        itemLista.appendChild(paragrafo);
+                    }
+
+                    listaDeImagens.appendChild(itemLista);
+                }
+            }
+        }
+
+        function validarTipoArquivo(arquivo) {
+            return tiposArquivosPermitidos.includes(arquivo.type);
+        }
+
+        function returnTamanhoArquivo(numero){
+            const umKiloByte = 1024
+            const umMegabyte = 1048576;
+
+            if(numero < umKiloByte){
+                return `${numero} bytes`;
+            }else if (numero >= umKiloByte && numero < umMegabyte){
+                return `${(numero / umKiloByte).toFixed(1)} KB`;
+            }else if (numero >= umMegabyte){
+                return `${(numero / umMegabyte).toFixed(1)} MB`;
+            }
+        }
+    </script>
+
+    <div class="referencia">
+        <p>Referências</p>
+        <ul>
+            <li>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file" target="_blank"><code>&lt;input type="file"&gt;</code></a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML/Element/link" target="_blank">Link</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Document/querySelector" target="_blank">Document.querySelector()</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Document/createElement" target="_blank">Document.createElement()</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Node/firstChild" target="_blank">Node.firstChild</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Node/removeChild" target="_blank">Node.removeChild</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Node/appendChild" target="_blank">Node.appendChild</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/File_API/Using_files_from_web_applications#getting_information_about_selected_files" target="_blank">input.files</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Node/textContent" target="_blank">Node.textContent</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Array/includes" target="_blank">Array.prototype.includes()</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/URL/createObjectURL" target="_blank">URL.createObjectURL()</a>
+            </li>
+            <li>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute" target="_blank">Element.setAttribute()</a>
+            </li>
+        </ul>
+    </div>
+  </body>
+</html>
